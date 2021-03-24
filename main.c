@@ -160,24 +160,6 @@ void    delay(uint24_t delayMS)
     while (getTimerMS() < stop) ;
 }
 
-void    showVolume()
-{
-    switch (checkVolume()) 
-    {
-        case 0:
-            setLED(0, 0, getVolume());
-            break;
-
-        case 1:
-            setLED(0, getVolume(), 0 );
-            break;
-
-        case 2:
-            setLED(getVolume(), 0, 0);
-            break;
-    }
-}
-
 void    setLED(uint8_t red, uint8_t green, uint8_t blue )
 {
     PWM1_DutyCycleSet(green);
@@ -259,13 +241,12 @@ void    powerUpTest () {
 void    powerDown(bool timeout) {
     
     SW_VCC_SetLow();
-    brightness = 0;
 
     // Fade out the Green LED
     if (timeout) {
         for (int b = 32; b >= 0; b-- )
         {
-            setLED(0, b, 0);
+            setLED(0, 0, b);
             delay(50);
         }
     }
@@ -306,7 +287,7 @@ void    powerDown(bool timeout) {
             while (brightness < FULL_GREEN) {
                 brightness++;
                 setLED(0,brightness,0);
-                delay(50);
+                delay(30);
             }
             setLED(0,0,0);
             break;
@@ -317,6 +298,7 @@ void    powerDown(bool timeout) {
     SW_VCC_SetHigh();
     resetVolumeLimit();
     delay(250);
+    resetTimerMS();
     clearPresses();
 }
 
